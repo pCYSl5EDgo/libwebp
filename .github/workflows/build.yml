@@ -10,43 +10,55 @@ on:
 jobs:
   build-windows-x64:
     runs-on: windows-2022
-    strategy:
-      matrix:
-        arch:
-          - amd64
-          - amd64_x86
-
     steps:
       - uses: actions/checkout@v2
 
       - name: Install
         uses: ilammy/msvc-dev-cmd@v1
         with:
-          arch: ${{ matrix.arch }}
+          arch: amd64
 
       - name: Build
-        run: nmake /f Makefile.vc CFG=release-static RTLIBCFG=static OBJDIR=output
+        run: nmake /f Makefile.vc CFG=release-dynamic RTLIBCFG=static OBJDIR=output
 
       - uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.arch }}
-          path: output/
+          name: win64
+          path: output/release-dynamic/x64/bin
 
-  build-linux:
-    runs-on: ubuntu-latest
-
+  build-windows-x86:
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v2
 
       - name: Install
-        run: sudo apt-get install libjpeg-dev libpng-dev libtiff-dev libgif-dev build-essential cmake
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: amd64_x86
 
       - name: Build
-        run: |
-          mkdir output && cd output && cmake ../
-          make
-      
+        run: nmake /f Makefile.vc CFG=release-dynamic RTLIBCFG=static OBJDIR=output
+
       - uses: actions/upload-artifact@v2
         with:
-          name: linux
-          path: output/
+          name: win32
+          path: output/release-dynamic/x86/bin
+
+  # build-linux:
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - uses: actions/checkout@v2
+
+  #     - name: Install
+  #       run: sudo apt-get install libjpeg-dev libpng-dev libtiff-dev libgif-dev build-essential cmake
+
+  #     - name: Build
+  #       run: |
+  #         mkdir output && cd output && cmake ../
+  #         make
+      
+  #     - uses: actions/upload-artifact@v2
+  #       with:
+  #         name: linux
+  #         path: output/
