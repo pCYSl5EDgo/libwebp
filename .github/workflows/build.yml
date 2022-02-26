@@ -19,8 +19,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Add msbuild to PATH
-        - uses: ilammy/msvc-dev-cmd@v1
+      - name: Install
+        uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.arch }}
 
